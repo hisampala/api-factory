@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id         String   @id @default(uuid()) @map("_id")
+  name       String
+  detail     String
+  createby   String
+  createdate DateTime @default(now())
+  updateby   String
+  updatedate DateTime @updatedAt
+  Branch     Branch[]
+
+  @@index([id, name, detail, createby, createdate, updateby, updatedate])
+}
+
+model Branch {
+  id         String    @id @default(uuid()) @map("_id")
+  name       String
+  detail     String
+  createby   String
+  createdate DateTime  @default(now())
+  updateby   String
+  updatedate DateTime  @updatedAt
+  companyId  String
+  Company    Company   @relation(fields: [companyId], references: [id])
+  Product    Product[]
+
+  @@index([id, name, detail, createby, createdate, updateby, updatedate,companyId])
+}
+
+model Product {
+  id         String   @id @default(uuid()) @map("_id")
+  name       String
+  detail     String
+  price      Float
+  quantity   Float
+  cost       Float
+  createby   String
+  createdate DateTime @default(now())
+  updateby   String
+  updatedate DateTime @updatedAt
+  branchId   String
+  Branch     Branch   @relation(fields: [branchId], references: [id])
+
+  @@index([id, name, detail, createby, createdate, updateby, updatedate,branchId])
+}
